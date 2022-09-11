@@ -1,34 +1,48 @@
 import { Request, Response } from "express";
-import * as cardService from '../services/cardService'
+import * as credentialService from '../services/credentialService'
 
 
-const createCard = async(req:Request, res:Response) =>{
+const createCredential = async(req:Request, res:Response) =>{
 
-    const {name, email, password} = req.body
-
-    const result = await cardService.createCard({name, email, password})
+    const {url, userName, password, title, name, label} = req.body
+    
+    const userId = res.locals.user.userId
+    const result = await credentialService.createCredential({url, userName, password, title, name, label, userId})
 
     res.status(201).send(result)
 
 }
 
-const findCard = async(req:Request, res:Response) =>{
+const findAllCredential = async(req:Request, res:Response) =>{
 
-    const {email, password} = req.body
+    const userId = res.locals.user.userId
 
-    const result = await cardService.findCard({email, password})
+    const result = await credentialService.findAllCredential(userId)
+
+    res.status(200).send(result)
+
+}
+
+const findCredentialById = async(req:Request, res:Response) =>{
+
+    const userId = res.locals.user.userId
+    const credentialId = Number(req.params.id)
+
+    const result = await credentialService.findCredentialById(userId, credentialId)
 
     res.status(200).send(result)
 
 }
 
-const deleteCard = async(req:Request, res:Response) =>{
+const deleteCredential = async(req:Request, res:Response) =>{
 
-    const {email, password} = req.body
+    const userId = res.locals.user.userId
+    const credentialId = Number(req.params.id)
 
-    const result = await cardService.deleteCard({email, password})
+    const result = await credentialService.deleteCredential(userId, credentialId)
 
     res.status(200).send(result)
-
 }
-export {createCard, findCard, deleteCard}
+
+
+export {createCredential, findAllCredential, findCredentialById, deleteCredential}

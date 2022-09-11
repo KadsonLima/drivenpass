@@ -4,19 +4,31 @@ import * as wifiService from '../services/wifiService'
 
 const createWifi = async(req:Request, res:Response) =>{
 
-    const {name, email, password} = req.body
-
-    const result = await wifiService.createWifi({name, email, password})
+    const {password, title, name} = req.body
+    
+    const userId = res.locals.user.userId
+    const result = await wifiService.createWifi({password, title, name, userId})
 
     res.status(201).send(result)
 
 }
 
-const findWifi = async(req:Request, res:Response) =>{
+const findAllWifi = async(req:Request, res:Response) =>{
 
-    const {email, password} = req.body
+    const userId = res.locals.user.userId
 
-    const result = await wifiService.findWifi({email, password})
+    const result = await wifiService.findAllWifi(userId)
+
+    res.status(200).send(result)
+
+}
+
+const findWifiById = async(req:Request, res:Response) =>{
+
+    const userId = res.locals.user.userId
+    const wifiId = Number(req.params.id)
+
+    const result = await wifiService.findWifiById(userId, wifiId)
 
     res.status(200).send(result)
 
@@ -24,11 +36,13 @@ const findWifi = async(req:Request, res:Response) =>{
 
 const deleteWifi = async(req:Request, res:Response) =>{
 
-    const {email, password} = req.body
+    const userId = res.locals.user.userId
+    const wifiId = Number(req.params.id)
 
-    const result = await wifiService.deleteWifi({email, password})
+    const result = await wifiService.deleteWifi(userId, wifiId)
 
     res.status(200).send(result)
-
 }
-export {createWifi, findWifi, deleteWifi}
+
+
+export {createWifi, findAllWifi, findWifiById, deleteWifi}

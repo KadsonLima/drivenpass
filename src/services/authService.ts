@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
-import { SignUpBody, SignInBody } from '../repositories/authRepositorie';
-import * as authRepository from '../repositories/authRepositorie'
+import { SignUpBody, SignInBody } from '../repositories/authRepository';
+import * as authRepository from '../repositories/authRepository'
 const BCRYPT_SECRET = Number(process.env.BCRYPT_SECRET)
 import jwt from 'jsonwebtoken';
 

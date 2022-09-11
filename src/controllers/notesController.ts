@@ -1,22 +1,34 @@
 import { Request, Response } from "express";
-import * as notesService from '../services/notesService'
+import * as noteService from '../services/noteService'
 
 
 const createNotes = async(req:Request, res:Response) =>{
 
-    const {name, email, password} = req.body
-
-    const result = await notesService.createNotes({name, email, password})
+    const {title, content} = req.body
+    
+    const userId = res.locals.user.userId
+    const result = await noteService.createNotes({title, content, userId})
 
     res.status(201).send(result)
 
 }
 
-const findNotes = async(req:Request, res:Response) =>{
+const findAllNotes = async(req:Request, res:Response) =>{
 
-    const {email, password} = req.body
+    const userId = res.locals.user.userId
 
-    const result = await notesService.findNotes({email, password})
+    const result = await noteService.findAllNotes(userId)
+
+    res.status(200).send(result)
+
+}
+
+const findNotesById = async(req:Request, res:Response) =>{
+
+    const userId = res.locals.user.userId
+    const noteId = Number(req.params.id)
+
+    const result = await noteService.findNotesById(userId, noteId)
 
     res.status(200).send(result)
 
@@ -24,11 +36,13 @@ const findNotes = async(req:Request, res:Response) =>{
 
 const deleteNotes = async(req:Request, res:Response) =>{
 
-    const {email, password} = req.body
+    const userId = res.locals.user.userId
+    const noteId = Number(req.params.id)
 
-    const result = await notesService.deleteNotes({email, password})
+    const result = await noteService.deleteNotes(userId, noteId)
 
     res.status(200).send(result)
-
 }
-export {createNotes, findNotes, deleteNotes}
+
+
+export {createNotes, findAllNotes, findNotesById, deleteNotes}
