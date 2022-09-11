@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { SignUpBody, SignInBody } from '../repositories/authRepositorie';
 import * as authRepository from '../repositories/authRepositorie'
 const BCRYPT_SECRET = Number(process.env.BCRYPT_SECRET)
-
+import jwt from 'jsonwebtoken';
 
 
 async function signUp({ name, email, password }:SignUpBody) {
@@ -15,7 +15,7 @@ async function signUp({ name, email, password }:SignUpBody) {
         email
     }
 
-    authRepository.createUser(dataUser)
+    await authRepository.createUser(dataUser)
 
 }
 
@@ -28,7 +28,11 @@ async function signIn({ email, password }:SignInBody) {
 
     if( !findUser || !passwordVerify ) throw {code:401, message:"Password or email Incorret !!"}
 
-    return findUser
+    const SECRET: string = process.env.TOKEN_SECRET_KEY ?? '';
+
+    const token = jwt.sign({userId:findUser.id}, SECRET, {expiresIn:'7d'})
+
+    return {token}
 }
 
 export {signUp, signIn}
