@@ -1,16 +1,15 @@
 import { Router } from "express";
-import {createCredential, deleteCredential, findAllCredential, findCredentialById} from "../controllers/credentialsController";
+import {createCard, deleteCard, findAllCard, findCardById} from "../controllers/cardsController";
 import schemaValidateMiddleware from "../middlewares/schemaValidateMiddleware";
-import createSchema from '../schemas/credentialSchemas/credentialCreate'
-import { validateJWT } from "../middlewares/validateJwtMiddleware";
+import createSchema from '../schemas/cardSchemas/cardCreate'
+import deleteSchema from "../schemas/deleteSchemas";
 
 
-const credentialRouter = Router();
+const cardRouter = Router();
 
-credentialRouter.use(validateJWT())
-credentialRouter.post("/credential",schemaValidateMiddleware(createSchema), createCredential);
-credentialRouter.get("/credential", findAllCredential);
-credentialRouter.get("/credential/:id", findCredentialById);
-credentialRouter.delete("/credential/:id", deleteCredential);
+cardRouter.post("/card",schemaValidateMiddleware(createSchema), createCard);
+cardRouter.get("/card", findAllCard);
+cardRouter.get("/card/:id", findCardById);
+cardRouter.delete("/card/:id",schemaValidateMiddleware(deleteSchema), deleteCard);
 
-export default credentialRouter
+export default cardRouter

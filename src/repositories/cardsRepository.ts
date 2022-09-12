@@ -1,48 +1,53 @@
+import { type } from 'os'
 import internal from 'stream'
 import {prisma} from '../database'
 
-export interface credentialBody{
-    url:string, 
-    userName:string, 
+export interface CardBody{
+    holderName:string, 
+    cvv:string, 
+    number:string, 
     password:string, 
     title:string, 
-    name:string, 
+    expiryDate:string, 
     userId:number,
-    label:string
+    type:CardTypes,
+    isVirtual:boolean
 }
 
-export type SignInBody = Omit<credentialBody, "name">
+type CardTypes = 'credit' | 'debit' | 'credit_debit'
 
-async function createCredential(body:credentialBody) {
+export type SignInBody = Omit<CardBody, "name">
 
-    const verifyExistCredential = await prisma.credential.findFirst({where:{title:body.title, userId:body.userId}})
+async function createCard(body:CardBody) {
 
-    if(verifyExistCredential) throw {code:409, message:"there is already a credential with this title"}
+    const verifyExistCard = await prisma.card.findFirst({where:{title:body.title, userId:body.userId}})
 
-    return await prisma.credential.create({
+    if(verifyExistCard) throw {code:409, message:"there is already a card with this title"}
+
+    return await prisma.card.create({
         data:body
     })
 }
 
-async function findAllCredential(userId:number) {
+async function findAllCard(userId:number) {
 
-    return await prisma.credential.findMany({
+    return await prisma.card.findMany({
         where: {userId}
     })
 }
 
-async function findCredentialById(userId:number, credentialId:number) {
+async function findCardById(userId:number, cardId:number) {
 
-    return await prisma.credential.findFirst({
-        where: {userId, id:credentialId}
+    return await prisma.card.findFirst({
+        where: {userId, id:cardId}
     })
 }
 
-async function deleteCredential(userId:number, credentialId:number) {
+async function deleteCard(userId:number, cardId:number) {
 
-    return await prisma.credential.deleteMany({
-        where: {id:credentialId, userId:userId}
+    return await prisma.card.deleteMany({
+        where: {id:cardId, userId:userId}
     })
 }
 
-export {createCredential,findAllCredential, findCredentialById, deleteCredential}
+export {createCard,findAllCard, findCardById, deleteCard}

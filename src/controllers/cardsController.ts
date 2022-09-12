@@ -1,48 +1,63 @@
 import { Request, Response } from "express";
-import * as credentialService from '../services/credentialService'
+import * as cardService from '../services/cardService'
 
 
-const createCredential = async(req:Request, res:Response) =>{
+const createCard = async(req:Request, res:Response) =>{
 
-    const {url, userName, password, title, name, label} = req.body
+    const {holderName, 
+        number, 
+        password, 
+        title, 
+        cvv,
+        expiryDate, 
+        isVirtual,
+        type} = req.body
     
     const userId = res.locals.user.userId
-    const result = await credentialService.createCredential({url, userName, password, title, name, label, userId})
+    const result = await cardService.createCard({holderName, 
+        number, 
+        password, 
+        title, 
+        cvv,
+        expiryDate, 
+        userId,
+        isVirtual,
+        type})
 
     res.status(201).send(result)
 
 }
 
-const findAllCredential = async(req:Request, res:Response) =>{
+const findAllCard = async(req:Request, res:Response) =>{
 
     const userId = res.locals.user.userId
 
-    const result = await credentialService.findAllCredential(userId)
+    const result = await cardService.findAllCard(userId)
 
     res.status(200).send(result)
 
 }
 
-const findCredentialById = async(req:Request, res:Response) =>{
+const findCardById = async(req:Request, res:Response) =>{
 
     const userId = res.locals.user.userId
-    const credentialId = Number(req.params.id)
+    const cardId = Number(req.params.id)
 
-    const result = await credentialService.findCredentialById(userId, credentialId)
+    const result = await cardService.findCardById(userId, cardId)
 
     res.status(200).send(result)
 
 }
 
-const deleteCredential = async(req:Request, res:Response) =>{
+const deleteCard = async(req:Request, res:Response) =>{
 
     const userId = res.locals.user.userId
-    const credentialId = Number(req.params.id)
+    const cardId = Number(req.params.id)
 
-    const result = await credentialService.deleteCredential(userId, credentialId)
+    const result = await cardService.deleteCard(userId, cardId)
 
     res.status(200).send(result)
 }
 
 
-export {createCredential, findAllCredential, findCredentialById, deleteCredential}
+export {createCard, findAllCard, findCardById, deleteCard}

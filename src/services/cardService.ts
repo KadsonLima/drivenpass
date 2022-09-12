@@ -1,60 +1,74 @@
 import bcrypt from 'bcrypt';
-import { credentialBody } from '../repositories/credentialRepository';
-import * as credentialRepository from '../repositories/credentialRepository';
+import { CardBody } from '../repositories/cardsRepository';
+import * as cardRepository from '../repositories/cardsRepository';
 import * as crypt from '../utils/cryptografy';
 
 
-async function createCredential({url, userName, password, title, name, label, userId}:credentialBody) {
+async function createCard({holderName, 
+   number, 
+   password, 
+   title, 
+   cvv,
+   expiryDate, 
+   userId,
+   isVirtual,
+   type
+}:CardBody) {
 
     const passwordCrypt = crypt.encryptPassword(password);
-    const credentialData = {
-        url,
-        userName,
-        password:passwordCrypt,
-        title,
-        name,
-        label,
-        userId
+    const cvvCrypt = crypt.encryptPassword(cvv);
+    const cardData = {
+      holderName, 
+      number, 
+      password:passwordCrypt, 
+      title, 
+      cvv:cvvCrypt,
+      expiryDate, 
+      userId,
+      isVirtual,
+      type
         
     }
 
-   return await credentialRepository.createCredential(credentialData)
+   return await cardRepository.createCard(cardData)
 
 }
 
-async function findAllCredential(userId:number) {
+async function findAllCard(userId:number) {
 
-   const credentials = await credentialRepository.findAllCredential(userId);
+   const cards = await cardRepository.findAllCard(userId);
 
-   for (const credential in credentials) {
-    credentials[credential].password = (crypt.decryptPassword(credentials[credential].password))
+   for (const card in cards) {
+    cards[card].password = (crypt.decryptPassword(cards[card].password))
+    cards[card].cvv = (crypt.decryptPassword(cards[card].cvv))
    }
 
-   return credentials
+   return cards
 
 }
 
-async function findCredentialById(userId:number, credentialId:number) {
+async function findCardById(userId:number, cardId:number) {
 
-    const credential =  await credentialRepository.findCredentialById(userId, credentialId);
+    const card =  await cardRepository.findCardById(userId, cardId);
 
-    if(!credential) throw {code: 404}
+    if(!card) throw {code: 404}
 
-    credential.password = (crypt.decryptPassword(credential.password))
+    card.cvv = (crypt.decryptPassword(card.cvv))
+    card.password = (crypt.decryptPassword(card.password))
 
-    return credential
+    return card
  
  }
 
- async function deleteCredential(userId:number, credentialId:number) {
+ async function deleteCard(userId:number, cardId:number) {
 
-    const credential =  await credentialRepository.deleteCredential(userId, credentialId);
+    const card =  await cardRepository.deleteCard(userId, cardId);
 
-    if(credential.count === 0) throw {code:404}
+    if(card.count === 0) throw {code:404}
     
-    return credential
+    return card
  
  }
 
 
-export {createCredential, findAllCredential, findCredentialById, deleteCredential}
+export {createCard, findAllCard, findCardById, deleteCard}
