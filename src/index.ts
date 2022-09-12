@@ -11,8 +11,8 @@ const server = express();
 
 server.use(cors());
 server.use(json());
-server.use(router);
 server.use(errorHandler);
+server.use(router);
 
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, ()=>{
